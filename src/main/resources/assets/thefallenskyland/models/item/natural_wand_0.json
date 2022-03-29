@@ -1,0 +1,6 @@
+{
+  "parent": "thefallenskyland:item/natural_wand",
+  "textures": {
+    "layer0": "thefallenskyland:item/natural_wand_0"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "thefallenskyland:item/fifth_chicken_bow",
+  "textures": {
+    "layer0": "thefallenskyland:item/fifth_chicken_bow_pulling_1"
+  }
+}

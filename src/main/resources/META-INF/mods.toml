@@ -1,0 +1,10 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="MIT"
+[[mods]]
+modId="thefallenskyland"
+version="${file.jarVersion}"
+displayName="The Fallen Sky Land"
+credits=""
+authors="superhelo"
+description=""

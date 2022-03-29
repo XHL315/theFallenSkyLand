@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thefallenskyland:item/natural_wand"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "thefallenskyland:natural_wand_pull": 1
+      },
+      "model": "thefallenskyland:item/natural_wand_0"
+    }
+  ]
+}
