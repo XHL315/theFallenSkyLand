@@ -16,7 +16,7 @@ import superhelo.thefallenskyland.registry.entity.EntityRegistry;
 import superhelo.thefallenskyland.registry.item.ItemRegistry;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = TheFallenSkyLand.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEventHandler {
 
     private static final IItemPropertyGetter predicate = (itemStack, clientWorld, livingEntity) ->

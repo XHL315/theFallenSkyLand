@@ -1,5 +1,6 @@
 package superhelo.thefallenskyland;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -14,8 +15,9 @@ import superhelo.thefallenskyland.registry.item.ItemRegistry;
 public class TheFallenSkyLand {
 
     public static final String MOD_ID = "thefallenskyland";
-    public static final Logger LOGGER = LogManager.getLogger("The Fallen Sky Land");
+    public static final Logger LOGGER = LogManager.getLogger("TheFallenSkyLand");
     public static final ItemGroup TCIAUTILS_GROUP = new ItemGroup("the_fallen_sky_land_group") {
+        @Nonnull
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ItemRegistry.FUNNY_ITEM.get());

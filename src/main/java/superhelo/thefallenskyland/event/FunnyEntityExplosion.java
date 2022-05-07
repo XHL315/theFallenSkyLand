@@ -9,10 +9,9 @@ import net.minecraft.world.Explosion;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import superhelo.thefallenskyland.TheFallenSkyLand;
 import superhelo.thefallenskyland.entity.FunnyItemEntity;
 
-@EventBusSubscriber(modid = TheFallenSkyLand.MOD_ID)
+@EventBusSubscriber
 public class FunnyEntityExplosion {
 
     @SubscribeEvent
