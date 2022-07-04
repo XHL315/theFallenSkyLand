@@ -7,6 +7,7 @@ import com.blamejared.crafttweaker.api.fluid.IFluidStack;
 import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.logger.ILogger;
 import com.blamejared.crafttweaker.impl.helper.CraftTweakerHelper;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.item.ItemStack;
@@ -19,8 +20,12 @@ import superhelo.thefallenskyland.recipe.BasinRightClickRecipe;
 public class CTBasinRecipe {
 
     @ZenCodeType.Method
-    public static void create(IItemStack rightClickStack, List<IItemStack> inputs, List<IFluidStack> fluids, List<IItemStack> outputs, List<IFluidStack> outputFluids) {
-        CraftTweakerAPI.apply(new Action(rightClickStack, inputs, fluids, outputs, outputFluids));
+    public static void create(IItemStack rightClickStack, IItemStack[] inputs, IFluidStack[] fluids, IItemStack[] outputs, IFluidStack[] outputFluids) {
+        CraftTweakerAPI.apply(new Action(rightClickStack, convertToList(inputs), convertToList(fluids), convertToList(outputs), convertToList(outputFluids)));
+    }
+
+    private static <T> List<T> convertToList(T[] array) {
+        return Arrays.stream(array).collect(Collectors.toList());
     }
 
     private static class Action implements IAction {

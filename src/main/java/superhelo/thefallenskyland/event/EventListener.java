@@ -26,6 +26,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import superhelo.thefallenskyland.entity.FunnyItemEntity;
 import superhelo.thefallenskyland.recipe.BasinRightClickRecipe;
+import superhelo.thefallenskyland.utils.FluidStackProxy;
+import superhelo.thefallenskyland.utils.ItemStackProxy;
 import superhelo.thefallenskyland.utils.ItemStackUtils;
 
 @EventBusSubscriber
@@ -42,13 +44,13 @@ public class EventListener {
         if (!world.isClientSide && event.getHand() == Hand.MAIN_HAND && isBasin && BasinRightClickRecipe.haveRecipe(heldStack)) {
             BasinTileEntity basin = (BasinTileEntity) tile;
             SmartInventory inventory = basin.inputInventory;
-            List<ItemStack> inputs = Lists.newArrayList();
-            List<FluidStack> fluids = Lists.newArrayList();
+            List<ItemStackProxy> inputs = Lists.newArrayList();
+            List<FluidStackProxy> fluids = Lists.newArrayList();
 
             for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack stack = inventory.getItem(i);
                 if (!stack.isEmpty()) {
-                    inputs.add(stack);
+                    inputs.add(new ItemStackProxy(stack));
                 }
             }
 
@@ -56,7 +58,7 @@ public class EventListener {
                 for (int i = 0; i < handler.getTanks(); i++) {
                     FluidStack fluid = handler.getFluidInTank(i);
                     if (!fluid.isEmpty()) {
-                        fluids.add(fluid);
+                        fluids.add(new FluidStackProxy(fluid));
                     }
                 }
             });
@@ -67,7 +69,8 @@ public class EventListener {
                 }
 
                 Fluid:
-                for (FluidStack fluid : fluids) {
+                for (FluidStackProxy proxy : fluids) {
+                    FluidStack fluid = proxy.getFluid();
                     for (FluidStack recipeFluid : recipe.getFluids()) {
                         if (fluid.containsFluid(recipeFluid)) {
                             fluid.shrink(recipeFluid.getAmount());
@@ -77,9 +80,10 @@ public class EventListener {
                 }
 
                 ItemStack:
-                for (ItemStack input : inputs) {
+                for (ItemStackProxy proxy : inputs) {
+                    ItemStack input = proxy.getStack();
                     for (ItemStack recipeStack : recipe.getInputs()) {
-                        if (ItemStackUtils.matches(recipeStack, input)) {
+                        if (ItemStackUtils.matches(input, recipeStack)) {
                             input.shrink(recipeStack.getCount());
                             continue ItemStack;
                         }

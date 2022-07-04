@@ -53,10 +53,10 @@ public class BasinRightClickRecipe {
         return !rightClickStack.isEmpty() && inputs.size() <= 9 && outputs.size() <= 9 && fluids.size() <= 4 && outputFluids.size() <= 2;
     }
 
-    public boolean matches(List<ItemStack> inputs, List<FluidStack> fluids) {
+    public boolean matches(List<ItemStackProxy> inputs, List<FluidStackProxy> fluids) {
         if (this.inputStacks.size() == inputs.size() && this.inputFluids.size() == fluids.size()) {
-            boolean inputMatch = this.inputStacks.containsAll(this.convertToItemProxy(inputs));
-            boolean fluidMatch = this.inputFluids.containsAll(this.convertToFluidProxy(fluids));
+            boolean inputMatch = this.inputStacks.containsAll(inputs);
+            boolean fluidMatch = this.inputFluids.containsAll(fluids);
             return inputMatch && fluidMatch;
         }
         return false;
