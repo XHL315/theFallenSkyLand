@@ -2,6 +2,7 @@ package superhelo.thefallenskyland.item;
 
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -20,13 +21,14 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import superhelo.thefallenskyland.TheFallenSkyLand;
-import superhelo.thefallenskyland.registry.item.ItemRegistry;
+import superhelo.thefallenskyland.registry.ItemRegistry;
 
-@EventBusSubscriber(modid = TheFallenSkyLand.MOD_ID)
+@EventBusSubscriber
+@ParametersAreNonnullByDefault
 public class NaturalWand extends Item {
 
     public NaturalWand() {
-        super(new Properties().group(TheFallenSkyLand.TCIAUTILS_GROUP).maxStackSize(1));
+        super(new Properties().tab(TheFallenSkyLand.TCIAUTILS_GROUP).stacksTo(1));
     }
 
     @Override
@@ -34,46 +36,52 @@ public class NaturalWand extends Item {
         return 1200;
     }
 
+    @SubscribeEvent
+    public static void onUseItemTick(LivingEntityUseItemEvent.Tick event) {
+        if (event.getItem().getItem() == ItemRegistry.NATURAL_WAND.get() && event.getEntityLiving() instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            BlockPos pos = player.blockPosition();
+            World level = player.level;
+
+            if (!level.isClientSide) {
+                List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AxisAlignedBB(pos.north(10).west(10).above(), pos.south(10).east(10)));
+                list.forEach(entity -> {
+                    if (player.getUseItemRemainingTicks() % 20 != 0) {
+                        return;
+                    }
+                    if (entity instanceof PlayerEntity) {
+                        PlayerEntity otherPlayer = (PlayerEntity) entity;
+                        otherPlayer.addEffect(new EffectInstance(Effects.REGENERATION, 100));
+                    } else {
+                        entity.hurt(DamageSource.MAGIC, 80);
+                    }
+                });
+            } else {
+                if (player.getUseItemRemainingTicks() % 20 != 0) {
+                    return;
+                }
+                for (int i = 0; i < 360; i += 5) {
+                    double random = i * Math.PI / 180;
+                    level.addParticle(ParticleTypes.HAPPY_VILLAGER, 10 * Math.cos(random) + player.getX(), player.getY(), 10 * Math.sin(random) + player.getZ(), 0, 0, 0);
+                }
+            }
+        }
+    }
+
     @Nonnull
     @Override
-    public UseAction getUseAction(ItemStack stack) {
+    public UseAction getUseAnimation(ItemStack pStack) {
         return UseAction.BOW;
     }
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
-        if(!worldIn.isRemote)
-            playerIn.setActiveHand(handIn);
-        return ActionResult.resultSuccess(itemstack);
-    }
-
-    @SubscribeEvent
-    public static void onUseItemTick(LivingEntityUseItemEvent.Tick event) {
-        if (event.getItem().getItem() == ItemRegistry.NATURAL_WAND.get() && event.getEntityLiving() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-            BlockPos pos = player.getPosition();
-            World world = player.world;
-
-            if (!world.isRemote) {
-                List<LivingEntity> list = world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(pos.north(10).west(10).up(), pos.south(10).east(10)));
-                list.forEach(entity -> {
-                    if(player.getItemInUseCount() % 20 != 0) return;
-                    if (entity instanceof PlayerEntity) {
-                        PlayerEntity otherPlayer = (PlayerEntity) entity;
-                        otherPlayer.addPotionEffect(new EffectInstance(Effects.REGENERATION, 100));
-                    } else {
-                        entity.attackEntityFrom(DamageSource.MAGIC, 80);
-                    }
-                });
-            } else {
-                for(int i = 0;i < 360;i+=5) {
-                    double random = i * Math.PI / 180;
-                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, 10 * Math.cos(random) + player.getPosX(), player.getPosY(), 10 * Math.sin(random) + player.getPosZ(), 0, 0, 0);
-                }
-            }
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        if (!worldIn.isClientSide) {
+            playerIn.startUsingItem(handIn);
         }
+        return ActionResult.success(itemstack);
     }
 
 }

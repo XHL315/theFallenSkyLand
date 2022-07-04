@@ -1,5 +1,6 @@
 package superhelo.thefallenskyland.entity;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -19,8 +20,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
-import superhelo.thefallenskyland.registry.entity.EntityRegistry;
-import superhelo.thefallenskyland.registry.item.ItemRegistry;
+import superhelo.thefallenskyland.registry.EntityRegistry;
+import superhelo.thefallenskyland.registry.ItemRegistry;
 
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
@@ -40,51 +41,53 @@ public class FunnyItemEntity extends ProjectileItemEntity {
         super(EntityRegistry.FUNNY_ENTITY.get(), shooter, worldIn);
     }
 
+    @Nonnull
     @Override
     protected Item getDefaultItem() {
         return ItemRegistry.FUNNY_ITEM.get();
     }
 
+    @Nonnull
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
-    public void onImpact(RayTraceResult result) {
-        super.onImpact(result);
+    public void onHit(RayTraceResult result) {
+        super.onHit(result);
 
-        if (!this.world.isRemote) {
-            this.world.createExplosion(this, this.getPosX(), this.getPosYHeight(0.0625D), this.getPosZ(), 10.0f, Mode.NONE);
-            this.world.setEntityState(this, (byte)3);
+        if (!this.level.isClientSide) {
+            this.level.explode(this.getOwner(), this.getX(), this.getY(0.0625D), this.getZ(), 10.0f, Mode.NONE);
+            this.level.broadcastEntityEvent(this, (byte) 3);
             this.remove();
         }
     }
 
     @Override
-    protected void onEntityHit(EntityRayTraceResult result) {
+    protected void onHitEntity(EntityRayTraceResult result) {
         Entity entity = result.getEntity();
 
-        if (!entity.world.isRemote) {
-            entity.attackEntityFrom(new DamageSource("fifthChickenDamage").setDamageBypassesArmor().setDamageIsAbsolute(), DAMAGE);
+        if (!entity.level.isClientSide) {
+            entity.hurt(new DamageSource("fifthChickenDamage").bypassArmor().bypassArmor(), DAMAGE);
         }
     }
 
     @OnlyIn(Dist.CLIENT)
     private IParticleData makeParticle() {
-        ItemStack itemstack = this.func_213882_k();
+        ItemStack itemstack = this.getItem();
         return itemstack.isEmpty() ?
             new ItemParticleData(ParticleTypes.ITEM, new ItemStack(ItemRegistry.FUNNY_ITEM.get())) :
             new ItemParticleData(ParticleTypes.ITEM, itemstack);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void handleStatusUpdate(byte id) {
+    public void handleEntityEvent(byte id) {
         if (id == 3) {
             IParticleData iparticledata = this.makeParticle();
 
-            for(int i = 0; i < 8; ++i) {
-                this.world.addParticle(iparticledata, this.getPosX(), this.getPosY(), this.getPosZ(), 0.0D, 0.0D, 0.0D);
+            for (int i = 0; i < 8; i++) {
+                this.level.addParticle(iparticledata, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
             }
         }
 

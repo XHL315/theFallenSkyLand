@@ -1,4 +1,4 @@
-package superhelo.thefallenskyland.registry.item;
+package superhelo.thefallenskyland.registry;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;

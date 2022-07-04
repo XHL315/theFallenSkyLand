@@ -8,8 +8,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import superhelo.thefallenskyland.registry.entity.EntityRegistry;
-import superhelo.thefallenskyland.registry.item.ItemRegistry;
+import superhelo.thefallenskyland.registry.EntityRegistry;
+import superhelo.thefallenskyland.registry.ItemRegistry;
 
 @Mod(TheFallenSkyLand.MOD_ID)
 public class TheFallenSkyLand {
@@ -19,7 +19,7 @@ public class TheFallenSkyLand {
     public static final ItemGroup TCIAUTILS_GROUP = new ItemGroup("the_fallen_sky_land_group") {
         @Nonnull
         @Override
-        public ItemStack createIcon() {
+        public ItemStack makeIcon() {
             return new ItemStack(ItemRegistry.FUNNY_ITEM.get());
         }
     };

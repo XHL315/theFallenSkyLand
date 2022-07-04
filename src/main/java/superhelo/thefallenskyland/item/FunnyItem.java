@@ -10,7 +10,7 @@ import superhelo.thefallenskyland.entity.FunnyItemEntity;
 public class FunnyItem extends Item {
 
     public FunnyItem() {
-        super(new Properties().group(TheFallenSkyLand.TCIAUTILS_GROUP));
+        super(new Properties().tab(TheFallenSkyLand.TCIAUTILS_GROUP));
     }
 
     public static ProjectileItemEntity createEntity(World worldIn, LivingEntity shooter) {

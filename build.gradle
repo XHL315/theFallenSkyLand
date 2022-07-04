@@ -1,24 +1,28 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.0.0'
+version = '1.2.0'
 group = 'superhleo.thefallenskyland'
 archivesBaseName = 'thefallenskyland'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
-    mappings channel: 'snapshot', version: '20210309-1.16.5'
+    mappings channel: 'parchment', version: '2022.03.06-1.16.5'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -27,9 +31,11 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'info'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
-                tciautils {
+                thefallenskyland {
                     source sourceSets.main
                 }
             }
@@ -42,7 +48,7 @@ minecraft {
             property 'forge.logging.console.level', 'info'
 
             mods {
-                tciautils {
+                thefallenskyland {
                     source sourceSets.main
                 }
             }
@@ -57,7 +63,7 @@ minecraft {
             args '--mod', 'tciautils', '--all', '--existing', file('src/main/resources/'), '--output', file('src/generated/resources/')
 
             mods {
-                tciautils {
+                thefallenskyland {
                     source sourceSets.main
                 }
             }
@@ -77,23 +83,36 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+
+    maven {
+        name 'crafttweaker'
+        url 'https://maven.blamejared.com'
+    }
+
+    maven {
+        name = "tterrag maven"
+        url = "https://maven.tterrag.com/"
+    }
+
 }
 
 dependencies {
-
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.29'
 
+    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.5:7.1.2.511")
+    implementation fg.deobf("com.jozufozu.flywheel:Flywheel:1.16-0.2.4.52")
+    implementation fg.deobf("com.simibubi.create:Create:mc1.16.5_v0.3.2g+480")
 }
 
 jar {
     manifest {
         attributes([
-            "Specification-Title": "thefallenskyland",
-            "Specification-Vendor": "thefallenskyland",
-            "Specification-Version": "1",
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"thefallenskyland",
+                "Specification-Title"   : "thefallenskyland",
+                "Specification-Vendor"  : "superhelo",
+                "Specification-Version" : "1",
+                "Implementation-Title"  : project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" : "superhelo",
         ])
     }
 }
